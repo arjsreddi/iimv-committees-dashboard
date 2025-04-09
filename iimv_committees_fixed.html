@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IIMV Academic Committees</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    .container { max-width: 900px; margin: auto; }
+    .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+    .tab-button { padding: 10px 20px; cursor: pointer; border: 1px solid #ccc; }
+    .active { background-color: #007bff; color: white; }
+    .card { border: 1px solid #ddd; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+    .search { width: 100%; padding: 10px; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>IIMV Academic Committees</h1>
+    <input type="text" id="search" class="search" placeholder="Search by name, role, or committee..." onkeyup="filterData()"/>
+
+    <div class="tabs">
+      <div id="committeesBtn" class="tab-button active" onclick="switchTab('committees')">Committees</div>
+      <div id="facultyBtn" class="tab-button" onclick="switchTab('faculty')">Faculty</div>
+    </div>
+
+    <div id="committeesTab" class="tab-content"></div>
+    <div id="facultyTab" class="tab-content" style="display:none;"></div>
+  </div>
+
+  <script>
+    const committees = [
+      {
+        name: "PGPC",
+        chair: "Amit Shankar",
+        members: ["Prashant P Nair", "Shivshanker S Patel", "Srirangacharyulu B", "Vishal Singh Patyal", "Asmita Verma"]
+      },
+      {
+        name: "PhD",
+        chair: "Shivshanker S Patel",
+        members: ["Prashant P Nair", "Srirangacharyulu B", "Asmita Verma"]
+      },
+      {
+        name: "EMBA",
+        chair: "Shivshanker S Patel",
+        members: ["Prashant P Nair", "Srirangacharyulu B", "Vishal Singh Patyal"]
+      }
+    ];
+
+    const faculty = [
+      {
+        name: "Vishal Singh Patyal",
+        area: "DS",
+        roles: ["Dean (A&R)", "Chair: PGDMEx, APAC, CRC"],
+        committees: ["PGPC", "EMBA"]
+      },
+      {
+        name: "Happy Paul",
+        area: "OBHR",
+        roles: ["Chair: EEPC, RCPC, AACFC, PRC, OLIC"],
+        committees: ["PGPC"]
+      },
+      {
+        name: "Amit Shankar",
+        area: "POM",
+        roles: ["Dean (Research)", "Chair: PGPC"],
+        committees: ["PGPC"]
+      }
+    ];
+
+    function switchTab(tab) {
+      document.getElementById('committeesBtn').classList.remove('active');
+      document.getElementById('facultyBtn').classList.remove('active');
+      document.getElementById('committeesTab').style.display = 'none';
+      document.getElementById('facultyTab').style.display = 'none';
+
+      if (tab === 'committees') {
+        document.getElementById('committeesBtn').classList.add('active');
+        document.getElementById('committeesTab').style.display = 'block';
+      } else {
+        document.getElementById('facultyBtn').classList.add('active');
+        document.getElementById('facultyTab').style.display = 'block';
+      }
+    }
+
+    function renderCommittees(data) {
+      return data.map(c => \`
+        <div class="card">
+          <h2>\${c.name}</h2>
+          <p><strong>Chair:</strong> \${c.chair}</p>
+          <p><strong>Members:</strong> \${c.members.join(', ')}</p>
+        </div>\`
+      ).join('');
+    }
+
+    function renderFaculty(data) {
+      return data.map(f => \`
+        <div class="card">
+          <h2>\${f.name}</h2>
+          <p><strong>Area:</strong> \${f.area}</p>
+          <p><strong>Roles:</strong> \${f.roles.join(', ')}</p>
+          <p><strong>Committees:</strong> \${f.committees.join(', ')}</p>
+        </div>\`
+      ).join('');
+    }
+
+    function filterData() {
+      const query = document.getElementById('search').value.toLowerCase();
+      const filteredCommittees = committees.filter(c =>
+        c.name.toLowerCase().includes(query) ||
+        c.chair.toLowerCase().includes(query) ||
+        c.members.some(m => m.toLowerCase().includes(query))
+      );
+      const filteredFaculty = faculty.filter(f =>
+        f.name.toLowerCase().includes(query) ||
+        f.area.toLowerCase().includes(query) ||
+        f.roles.join(', ').toLowerCase().includes(query)
+      );
+      document.getElementById('committeesTab').innerHTML = renderCommittees(filteredCommittees);
+      document.getElementById('facultyTab').innerHTML = renderFaculty(filteredFaculty);
+    }
+
+    // Initial render
+    document.getElementById('committeesTab').innerHTML = renderCommittees(committees);
+    document.getElementById('facultyTab').innerHTML = renderFaculty(faculty);
+  </script>
+</body>
+</html>
